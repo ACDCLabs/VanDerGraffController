@@ -13,7 +13,7 @@ void setup() {
   // Attach the ESC on pin 9
   ESC.attach(9,1000,2000); // (pin, min pulse width, max pulse width in microseconds) 
 
-  ESC.write(0);  
+  ESC.write(25);  
   delay(1000);
 }
 
