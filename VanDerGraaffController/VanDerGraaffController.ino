@@ -64,6 +64,8 @@ for (int s = mySpeed; s>90; s--) {
 
 Serial.println("Stop");
 delay(2000);
+pinMode(9, INPUT_PULLUP);
+pinMode(10, INPUT_PULLUP);
 
 Serial.println("Direction two - Accel"); 
 
