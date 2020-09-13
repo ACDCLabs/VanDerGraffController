@@ -92,3 +92,28 @@ delay(2000);
   //ESC.writeMicroseconds(1500);
 
 }
+
+
+bool  wait(int millisWait) {
+
+  static bool didStart = false;
+  static int startMillis;
+  static int millisPassed;
+
+
+  if (!didStart) {
+    didStart = true;
+    startMillis = millis();
+    millisPassed = 0;
+  }
+
+  millisPassed = millis() - startMillis;
+
+  if (millisPassed >= millisWait) {
+    didStart = false;
+    startMillis = 0;
+    return true;
+  }
+  else return false;
+
+}
