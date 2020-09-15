@@ -11,6 +11,14 @@ int potValue;  // value from the analog pin
 
 #define UP_BUTTON 9
 #define DOWN_BUTTON 10
+#define MILLIS_TO_WAIT 500 // if a button is pressed logner speed changes faster
+#define CHANGE_WAIT_MILLIS 50 // if button is pressed longer the wait time to change speed is increases / decreased by this 
+
+#define MAX_FORWARD_SPEED 180
+#define STOP_MOTOR 90
+#define MAX_BACKWARD_SPEED 0
+
+int speed = STOP_MOTOR;
 
 void setup() {
 
@@ -22,7 +30,7 @@ void setup() {
   ESC.attach(8, 1000, 2000); // (pin, min pulse width, max pulse width in microseconds)
   //ESC.attach(9); // (pin, min pulse width, max pulse width in microseconds)
   int i;
-  ESC.write(90);  // neutral = motor stops used to arm ESC
+  ESC.write(STOP_MOTOR);  // neutral = motor stops used to arm ESC
   //ESC.writeMicroseconds(1000);
   delay(1000);
 
@@ -47,17 +55,43 @@ void loop() {
   // potValue = analogRead(A0);   // reads the value of the potentiometer (value between 0 and 1023)
   // potValue = map(potValue, 0, 1023, 0, 180);   // scale it to use it with the servo library (value between 0 and 180)
   // Send the signal to the ESC
-  ESC.write(90);
-  delay(2000);
+  //ESC.write(90);
+  // delay(2000);
 
-  int speed = 0;
+  /*
+    Serial.print("up:");
+    Serial.println(digitalRead(UP_BUTTON));
+    Serial.print("down:");
+    Serial.println(digitalRead(DOWN_BUTTON));
+  */
+  int millisToWait;
+  millisToWait = MILLIS_TO_WAIT;
 
-  while (digitalRead(UP_BUTTON) == HIGH) {
-    if ( wait(1000)  == TRUE) {
-      speed ++;
+  while (digitalRead(UP_BUTTON) == LOW) {
+    if ( wait(millisToWait)  == true) {
+      if (speed < MAX_FORWARD_SPEED) speed ++;
+      ESC.write(speed);
+      Serial.print("waitMillies: ");
+      Serial.println(millisToWait);
+      if (millisToWait > CHANGE_WAIT_MILLIS) millisToWait -= CHANGE_WAIT_MILLIS;
+      Serial.print("Speed: ");
+      Serial.println(speed);
 
     }
-    Serial.println(speed);
+
+  }
+
+  while (digitalRead(DOWN_BUTTON) == LOW) {
+    if ( wait(millisToWait)  == true) {
+      if (speed > MAX_BACKWARD_SPEED) speed --;
+      ESC.write(speed);
+      Serial.print("waitMillies: ");
+      Serial.println(millisToWait);
+      if (millisToWait > CHANGE_WAIT_MILLIS) millisToWait -= CHANGE_WAIT_MILLIS;
+      Serial.print("Speed: ");
+      Serial.println(speed);
+    }
+
   }
 
 }
